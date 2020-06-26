@@ -1,0 +1,83 @@
+<script src="../simpleTest.js"></script>
+<script>
+
+// MDN Definition:
+// The shift() method removes the first element from an array and 
+// returns that removed element. This method changes the length 
+// of the array.
+
+// NOTES:
+
+// shift REQUIREMENTS:
+
+// DONE It should return the first element in the array.
+// DONE It should make the array shorter.
+// DONE It should delete the first index in the array.
+// DONE It should shift each value in the array down an index.
+// DONE If array is empty, it should return undefined.
+
+
+
+
+function shift(array) {
+  var shiftedElement = array[0];
+  var bucket = array;
+
+  if (typeof arguments[0] !== 'object') {
+    throw new TypeError('array.shift is not a function');
+  }
+
+  if (array.length < 1) {
+    return undefined;
+  }
+  
+  for (var i = 0; i < array.length - 1; i++) {
+    array[i] = bucket[i + 1];
+  }
+  array.length = array.length - 1;
+  return shiftedElement;
+}
+
+
+tests({
+
+  'It should return the first element in the array.': function() {
+    var myArray = ['shift', 'keep'];
+    var result = shift(myArray);
+    eq(result, 'shift');
+  },
+  'It should make the array shorter.': function() {
+    var myArray = ['shift', 'keep'];
+    eq(myArray.length, 2);
+    shift(myArray);
+    eq(myArray.length, 1);
+  },
+  'It should delete the first index in the array.': function() {
+    var myArray = ['shift', 'keep'];
+    eq(myArray[0], 'shift');
+    shift(myArray);
+    eq(myArray.includes('shift'), false);
+  },
+  'It should shift each value in the array down an index.': function() {
+    var myArray = ['shift', 'keep'];
+    eq(myArray[1], 'keep');
+    shift(myArray);
+    eq(myArray[0], 'keep');
+  },
+  'If array is empty, it should return undefined.': function() {
+    var myArray = [];
+    var result = shift(myArray);
+    eq(result, undefined);
+  },
+  'If it is called on an element that is not an array, throw TypeError.': function() {
+    var myElement = 2;
+    var isTypeError = false;
+    try {
+      shift(myElement);
+    } catch(e) {
+      isTypeError = (e instanceof TypeError);
+    }
+    eq(isTypeError, true);
+  }
+});
+</script>

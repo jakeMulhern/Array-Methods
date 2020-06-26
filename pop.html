@@ -1,0 +1,57 @@
+<script src="../simpleTest.js"></script>
+<script>
+
+// MDN Definition:
+//
+
+// NOTES:
+
+// push REQUIREMENTS:
+
+// DONE It should remove the last element from the array.
+// DONE It should return the removed element from the array.
+// DONE If array is empty, it should return undefined.
+
+
+
+
+function pop(array) {
+  var poppedElement = array[array.length - 1];
+
+  if (array.length < 1) {
+    return undefined;
+  }
+
+  array.length = array.length-1;
+
+  return poppedElement;
+}
+
+
+tests({
+
+  'It should remove the last element from the array.': function() {
+    var myArray = [1, 2];
+    pop(myArray);
+    eq(myArray.length, 1);
+  },
+  'It should return the removed element.': function() {
+    var myArray = ['first', 'second'];
+    var result = pop(myArray);
+    eq(result, 'second');
+  },
+  'If array is empty, it should return undefined.': function() {
+    var myArray = [];
+    var result = pop(myArray);
+    eq(result, undefined);
+  },
+  'It should make the array one index shorter.': function() {
+    var myArray = [1, 2];
+    eq(myArray.length, 2);
+    pop(myArray);
+    eq(myArray.length, 1);
+  }
+
+
+});
+</script>

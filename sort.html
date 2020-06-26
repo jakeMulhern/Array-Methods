@@ -1,0 +1,171 @@
+<script src="../simpleTest.js"></script>
+<script>
+
+// MDN Definition:
+// The sort() method sorts the elements of an array in place and returns the sorted 
+// array. The default sort order is ascending, built upon converting the elements 
+// into strings, then comparing their sequences of UTF-16 code units values.
+
+
+// sort REQUIREMENTS:
+
+// DONE It should compare two elements and reorder them in the array if the first element is greater than the first element.
+// DONE If callback function is not passed in, it should convert elements into strings for comparison.
+// DONE If callback function is not passed in, it should sort items in ascending order.
+
+// DONE It should return the same array.
+// DONE It should return the same array, but sorted.
+// DONE It should sort undefined elements to the end of the array. 
+
+// DONE If callback(2nd argument) returns < 0, the two elements passed into callback should remain in the same order.
+// DONE If callback(2nd argument) returns 0, the two elements passed into callback should remain in the same order.
+// DONE If callback(2nd argument) returns 0, the two elements passed into callback should switch places in the array order based on requirements of the callback.
+// DONE It should sort undefined elements to the end without running the callback.
+
+// DONE It should be able to sort objects based on their properties.
+
+
+// NOTES: 
+// converts values to strings.
+// 
+
+function sort(array, callback) {
+  var originalLength = array.length;
+  var sortArguments = arguments.length;
+
+
+  array.length = array.length + 2;
+  for (var j = 0; j < array.length; j++) {
+    for (var i = 0; i < originalLength; i++) {
+      array[originalLength] = array[i];
+      array[originalLength + 1] = array[i + 1];
+      if (sortArguments === 2) {
+
+        if (array[i] === undefined && array[i + 1] === undefined) {
+          array[i] = array[i];
+          array[i + 1] = array[i + 1];      
+        } else if (array[i] === undefined && array[i + 1] !== undefined) {
+          array[i] = array[originalLength + 1];
+          array[i + 1] = array[originalLength];
+        } else if (array[i] === undefined && array[i] !== undefined) {
+            array[i] = array[originalLength];
+            array[i + 1] = array[originalLength + 1];
+        } else if (array[i] !== undefined && array[i + 1] !== undefined) {
+            var result = callback(array[i], array[i + 1]);
+            if (result > 0) {
+            array[i] = array[originalLength + 1];
+            array[i + 1] = array[originalLength];
+          } else {
+            array[i] = array[i];
+            array[i + 1] = array[i + 1];
+          }
+        }
+      } else if (sortArguments === 1) {
+        if (array[i] === undefined) {
+          array[i] = array[originalLength + 1];
+          array[i + 1] = array[originalLength];
+      } else if (array[i + 1] === undefined) {
+          array[i] = array[i];
+          array[i + 1] = array[i + 1];
+      } else if (array[i].toString() > array[i + 1].toString()) {
+          array[i] = array[originalLength + 1];
+          array[i + 1] = array[originalLength];
+        }
+      }
+    }
+  }
+  
+  array.length = array.length - 2;
+  return array;
+}
+
+tests({
+
+  'It should compare two elements and reorder them in the array if the first element is greater than the first element.': function() {
+    var myArray = [2, 1];
+    sort(myArray);
+    eq(myArray[0], 1);
+    eq(myArray[1], 2);
+  },
+  'If callback function is not passed in, it should convert elements into strings for comparison.': function() {
+    var myArray = [2, 100];
+    sort(myArray);
+    eq(myArray[0], 100);
+    eq(myArray[1], 2);
+  },
+  'If callback function is not passed in, it should sort items in ascending order.': function() {
+    var myArray = [3, 2, 1];
+    sort(myArray);
+    eq(myArray[0], 1);
+    eq(myArray[1], 2);
+    eq(myArray[2], 3);
+  },
+  'It should return the same array.': function() {
+    var myArray = [2, 1];
+    var result = sort(myArray);
+    eq(result, myArray);
+  },
+  'It should return the same array, but sorted.': function() {
+    var myArray = [2, 1];
+    var result = sort(myArray);
+    eq(result, '1,2');
+  },
+  'It should sort undefined elements to the end of the array.': function() {
+    var myArray = [2, undefined, 1];
+    sort(myArray);
+    eq(myArray[0], 1);
+    eq(myArray[1], 2);
+    eq(myArray[2], undefined);
+  },
+  'If callback(2nd argument) returns < 0, the two elements passed into callback should remain in the same order.': function() {
+    var myArray = [1, 2];
+    eq(myArray[0], 1);
+    eq(myArray[1], 2);
+    sort(myArray, function(a, b) {
+      return a - b;
+    })
+    eq(myArray[0], 1);
+    eq(myArray[1], 2)
+  },
+  'If callback(2nd argument) returns 0, the two elements passed into callback should remain in the same order.': function() {
+    var myArray = [10, 10];
+    eq(myArray[0], myArray[1]);
+    sort(myArray, function(a, b) {
+      return a - b;
+    })
+    eq(myArray[0], myArray[1]);
+  },
+  'If callback(2nd argument) returns 0, the two elements passed into callback should switch places in the array order based on the requirements of the callback.': function() {
+    var myArray = [10, 2];
+    eq(myArray[0], 10);
+    eq(myArray[1], 2);
+    sort(myArray, function(a, b) {
+      return a - b;
+    });
+    eq(myArray[0], 2);
+    eq(myArray[1], 10);
+  },
+  'It should sort undefined elements to the end without running the callback.': function() {
+    var myArray = [undefined, 1];
+    var numberOfCallbacks = 0;
+    sort(myArray, function(a, b) {
+      numberOfCallbacks++;
+      return a - b;
+    });
+    eq(numberOfCallbacks, 0);
+  },
+  'It should be able to sort objects based on their properties.': function() {
+    var myDogs = [
+      {name: 'Zeke', scoops: 2},
+      {name: 'Bemis', scoops: 1}
+    ];
+    sort(myDogs, function(a, b) {
+      return a.scoops - b.scoops;
+    });
+    eq(myDogs[0].name, 'Bemis');
+    eq(myDogs[1].name, 'Zeke');
+  }
+
+
+});
+</script>

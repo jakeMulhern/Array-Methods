@@ -1,0 +1,129 @@
+<script src="../simpleTest.js"></script>
+<script>
+
+// MDN Definition:
+// The indexOf() method returns the first index at which 
+// a given element can be found in the array, or -1 if it 
+// is not present.
+
+// NOTES:
+// It should use strict equality.
+  // === is the same as strict equality.
+
+
+// indexOf REQUIREMENTS:
+
+// DONE It should compare the element passed in as the second argument to each element in the array.
+// DONE It should only return the index of the first element in the array that matches searchElement.
+// DONE If no elements in the array match the searchElement, it should return -1.
+// DONE If a startingIndex is provided as the third argument, it should begin searching the array at that index.
+
+// DONE If startingIndex is greater than or equal to the arr.length, it should return -1 without searching the array.
+// DONE If startingIndex is a negative number, it should begin searching the array that many index locations from the end of the array.
+// DONE If startingIndex is 0, it should search the entire array.
+
+
+/* THIS CODE WORKS
+function indexOf(array, searchElement, startingIndex) {
+  if (startingIndex) {
+    if (startingIndex >= array.length) {
+      return -1;
+    }
+  }
+
+  if (arguments.length === 3 && startingIndex > 0) {
+    for (var j = startingIndex; j < array.length; j++) {
+      if (searchElement === array[j]) {
+        return j;
+      }
+    }
+  } else if (arguments.length === 3 && startingIndex < 0) {
+      for (var k = ((array.length - 1) + startingIndex); k < array.length; k++) {
+        if (searchElement === array[k]) {
+          return k;
+        }
+      }
+  } else {
+    for (var i = 0; i < array.length; i++) {
+      if (searchElement === array[i]) {
+        return i;
+      }
+    }
+  }
+  return -1;
+}
+*/
+
+// This code is condensed and written in a cleaner manner.
+function indexOf(array, searchElement, startingIndex) {
+  if (arguments.length === 3) {
+    if (startingIndex >= array.length) {
+      return -1;
+    } else if (startingIndex >0) {
+      for (var j = startingIndex; j < array.length; j++) {
+        if (searchElement === array[j]) {
+          return j;
+        }
+      }
+    } else if (startingIndex < 0) {
+      for (var k = ((array.length - 1) + startingIndex); k < array.length; k++) {
+        if (searchElement === array[k]) {
+          return k;
+        }
+      }
+    }
+  } else {
+    for (var i = 0; i < array.length; i++) {
+      if (searchElement === array[i]) {
+        return i;
+      }
+    }
+  }
+  return -1;
+}
+
+
+tests({
+
+  'It should compare the second argument to each element in the array': function() {
+    var myArray = [1];
+    var searchElement = 1;
+    var result = indexOf(myArray, searchElement);
+    eq(result, 0);
+  },
+  'It should only return the index of the first element in the array that matches searchElement.': function() {
+    var myArray = [1, 2, 3];
+    var result = indexOf(myArray, 2);
+    eq(result, 1);
+  },
+  'If no elements in the array match the searchElement, it should return -1.': function() {
+    var myArray = [1];
+    var searchElement = 2;
+    var result = indexOf(myArray, searchElement);
+    eq(result, -1);
+  },
+  'If a startingIndex is provided as the third argument, it should begin searching the array at that index.': function() {
+    var myArray = [3, 1, 2, 3];
+    var result = indexOf(myArray, 3, 1);
+    eq(result, 3);
+  },
+  'If startingIndex is greater or equal to the array length, return -1 without searching the array.': function() {
+    var myArray = [1];
+    var result = indexOf(myArray, 1, 2);
+    eq(result, -1);
+  },
+  'If startingIndex is a negative number, it should begin searching the array that many index locations from the end of the array.': function() {
+    var myArray = [3, 1, 2, 3, 1, 2, 3];
+    var result = indexOf(myArray, 3, -2);
+    eq(result, 6);
+  },
+  'If startingIndex is 0, it should search the entire array.': function() {
+    var myArray = [1, 2, 3];
+    var result = indexOf(myArray, 4, 0);
+    eq(result, -1);
+  }
+
+
+
+});
+</script>

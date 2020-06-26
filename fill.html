@@ -1,0 +1,158 @@
+<script src="../simpleTest.js"></script>
+<script>
+
+// MDN Definition:
+// The fill() method changes all elements in an array to a 
+// static value, from a start index (default 0) to an 
+// end index (default array.length). It returns the modified array.
+
+// NOTES:
+
+// fill REQUIREMENTS:
+
+// DONE It should change elements in an array to a designated static value.
+// DONE If start position is included as a thid argument, it should change array elements to static value from that index.
+// DONE If end position is included as a fourth argument, it should stop changing elements in the array to static value once it reaches that index.
+// DONE If no start is designated, it should begin with array[0].
+// DONE If no end is designated, it should stop at array.length.
+// DONE It should return the modified array.
+// DONE It should modify the original array, not create a new array.
+// DONE If start is negative, it should offset that many indexes from array.length.
+// DONE If end is negative, it should offset that many indexes from array.length.
+// DONE If start is greater than array.length, return array unmodified.
+// DONE If calculated end is less than 0, return array unmodified.
+// DONE If calculated start is less than 0, modify from beginning of the array until the end if designated, otherwise until array.length;
+
+// DONE If the static value is an object, each modified spot should reference that same object.
+
+
+function fill(array, staticValue, start, end) {
+  var fixedStart = start;
+  var fixedEnd = end;
+
+  if (start) {
+    if (start < 0) {
+      if ((array.length + start) < 0) {
+        fixedStart = 0;
+      } else {
+          fixedStart = array.length + start;
+      }
+    } else if (start > array.length) {
+      return array;
+    }
+  }
+
+  if (end) {
+    if (end < 0) {
+      if ((array.length + end) < 0) {
+        return array;
+      } else {
+          fixedEnd = array.length + end;
+      }
+    } else if (end > array.length) {
+        fixedEnd = array.length;
+    }
+  }
+
+
+
+  if (arguments.length === 4) {
+    for (var k = fixedStart; k < fixedEnd; k++) {
+      array[k] = staticValue;
+    }
+  } else if (arguments.length === 3) {
+    for (var j = fixedStart; j < array.length; j++) {
+      array[j] = staticValue;
+    }
+  } else {
+    for (var i = 0; i < array.length; i++) {
+        array[i] = staticValue;
+    }
+  }
+  return array;
+
+}
+
+
+
+tests({
+
+  'It should change elements in an array to a designated static value.': function() {
+    var myArray = ['old'];
+    fill(myArray, 'new');
+    eq(myArray, 'new');
+  },
+  'If start position is included as a third argument, it should change array elements to static value from that index.': function() {
+    var myArray = ['first', 'second'];
+    fill(myArray, 'new', 1);
+    eq(myArray[0], 'first');
+    eq(myArray[1], 'new');
+  },
+  'If end position is included as a fourth argument, it should stop changing elements in the array to static value once it reaches that index.': function() {
+    var myArray = ['first', 'second', 'third'];
+    fill(myArray, 'new', 1, 2);
+    eq(myArray[0], 'first');
+    eq(myArray[1], 'new');
+    eq(myArray[2], 'third');
+  },
+  'If no start is designated, it should begin with array[0].': function() {
+    var myArray = ['first', 'second'];
+    fill(myArray, 'new');
+    eq(myArray[0], 'new');
+  },
+  'If no end is designated, it should finish at array.length.': function() {
+    var myArray = ['first', 'second'];
+    fill(myArray, 'new');
+    eq(myArray[1], 'new');
+  },
+  'It should return the modified array': function() {
+    var myArray = ['old'];
+    var result = fill(myArray, 'new');
+    eq(result, 'new');
+    eq(result, myArray);
+  },
+  'It should modify the array, not create a new array.': function() {
+    var myArray = ['old'];
+    var result = fill(myArray, 'new');
+    eq(result, myArray);
+  },
+  'If start is negative, it should offset that many indexes from array.length.': function() {
+    var myArray = ['first', 'second'];
+    fill(myArray, 'new', -1);
+    eq(myArray[0], 'first');
+    eq(myArray[1], 'new');
+  },
+  'If end is negative, it should offset that many indexes from array.length.': function() {
+    var myArray = ['first', 'second'];
+    fill(myArray, 'new', 0, -1);
+    eq(myArray[0], 'new');
+    eq(myArray[1], 'second');
+  },
+  'If start is greater than array.length, return array unmodified.': function() {
+    var myArray = ['old'];
+    var result = fill(myArray, 'new', 5);
+    eq(result, 'old');
+  },
+  'If calculated end is less than 0, return array unmodified.': function() {
+    var myArray = ['old'];
+    var result = fill(myArray, 'new', 0, -5);
+    eq(result, 'old');
+  },
+  'If calculated start is less than 0, modify from beginning of the array until the end if designated, otherwise until array.length;': function() {
+    var myArray = ['first', 'second'];
+    fill(myArray, 'new', -3, 1);
+    eq(myArray[0], 'new');
+    eq(myArray[1], 'second');
+  },
+  'If the static value is an object, each modified spot should reference that same object.': function() {
+    var myArray = ['first', 'second'];
+    var myElement = [[2]]
+    fill(myArray, myElement);
+    eq(myArray[0], myArray[1]);  
+    myElement.push(3);
+    eq(myArray[0].length, 2);
+  }
+  
+
+});
+</script>

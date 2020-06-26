@@ -1,0 +1,203 @@
+<script src="../simpleTest.js"></script>
+<script>
+// MDN Definition:
+// The concat() method is used to merge two or more arrays. 
+// This method does not change the existing arrays, but instead
+// returns a new array.
+
+// NOTES:
+// Shallow copies:
+/*
+Makes copies of references to the objects.
+Changes to the shallow copy elements change original elements as well.
+Points to the same memory location
+*/
+
+
+// Requirements:
+
+// DONE It should pass in originalArray as the first argument.
+// DONE It should pass in optional value(N) as further arguments.
+// DONE It should return an array.
+// DONE It should return a newArray, not the originalArray.
+// DONE If no value(N), it should return a shallow copy of originalArray.
+// DONE newArray should consist of elements in originalArray first, then followed by elements of each argument in order they were passed in.
+// DONE It should concatenate as many values as are passed in as arguments.
+
+// DONE It should not alter "this(originalArray)".
+// DONE It should not alter elements or arrays passed in as arguments.
+// DONE If newArray is modified, it should not effect originalArray.
+
+// DONE It should return a shallow copy of objects passed in in the originalArray.
+// DONE It should return a shallow copy of objects passed in in the additional values too.
+  // Ex:
+  // If the object that is referenced is modified, the change should be visible in originalArray and newArray.
+  // This includes elements of array arguments that are also arrays.
+
+// DONE If string is passed in, it should copy value of string into newArray.
+// DONE If number is passed in, it should copy value of number into newArray.
+// DONE If boolean is passed in, it should copy value of boolean into newArray.
+// DONE If originalArray is not an array or a string, it should throw a TypeError
+
+// DONE It should not recurse into nested array arguments.
+
+
+/* replaced typeof check for numbers and booleans with Array.isArray
+    just to see if they work the same
+  function concat(originalArray, value) {
+    var concatResult = [];
+    var boundLength = arguments.length;
+
+    concatResult = originalArray.slice(0);
+    
+    if (arguments.length === 1) {
+      return concatResult;
+    } else {
+      for (var i = 1; i < boundLength; i++) {
+        if (Array.isArray(arguments[i]) === false) {
+          // concatResult.push(arguments[i].slice(0));
+          concatResult.push(arguments[i]);
+        } else {
+          //concatResult.push(arguments[i]);
+          concatResult.push(arguments[i].slice(0));
+        }
+      }
+    }
+    return concatResult;
+  }
+*/
+
+function concat(originalArray, value) {
+    var concatResult = [];
+    var boundLength = arguments.length;
+
+    concatResult = originalArray.slice(0);
+    console.log(arguments[0]);
+    console.log(typeof originalArray);
+
+    if (arguments.length === 1) {
+      return concatResult;
+    } else {
+      for (var i = 1; i < boundLength; i++) {
+        if ((typeof arguments[i]) === 'number' || 'boolean' || 'string') {
+          concatResult.push(arguments[i]);
+        } else {
+          concatResult.push(arguments[i].slice(0));
+        }
+      }
+    }
+    return concatResult;
+  }
+
+
+tests({
+  
+    'It should pass in originalArray as the first argument.': function() {
+      var originalArray = [1];
+      concat(originalArray);
+      eq(originalArray, 1);
+    },
+    'It should pass in optional value(N) as further arguments.': function() {
+      var originalArray = [1];
+      var additionalValue = [2];
+      concat(originalArray, additionalValue);
+      eq(additionalValue, 2);
+    },
+    'It should return an array.': function() {
+      var testArray = [];
+      var concatArray = concat(testArray);
+      eq(Array.isArray(concatArray), true);
+    },
+    'It should return a new array, not the array being filtered.': function() {
+    var arrayBeingConcated = [];
+    var concatArray = concat(arrayBeingConcated);
+    //filteredArray is not equal to testArray
+    eq(concatArray !== arrayBeingConcated, true);
+    },
+    'If no value(N), it should return a shallow copy of originalArray.': function() {
+      var originalArray = [1];
+      var result = concat(originalArray);
+      eq(result[0], 1);
+    },
+    'newArray should consist of elements in originalArray first, then followed by elements of each argument in order they were passed in.': function() {
+      var result = concat([1], [2]);
+      eq(result[0], 1);
+      eq(result[1], 2);
+      eq(result.length, 2);
+    },
+    'It should not alter "this(originalArray)".': function() {
+      var originalArray = ['new'];
+      concat(originalArray);
+      eq(originalArray, 'new');
+      eq(originalArray.length, 1);
+    },
+    'It should not alter elements or arrays passed in as arguments.': function() {
+      var originalArray = [1];
+      var additionalValue = [2];
+      concat(originalArray, additionalValue);
+      eq(additionalValue, 2);
+      eq(additionalValue.length, 1);
+    },
+    'It should return a shallow copy of objects passed in in the originalArray.': function() {
+      var myArray = [[1]];
+      var result = concat(myArray);
+      myArray[0].push('new');
+      eq(result[0].length, 2);
+    },
+    'It should return a shallow copy of objects passed in in the additional values too.': function() {
+      var myArray = [[1]];
+      var myValue = [[2]];
+      var result = concat(myArray, myValue);
+      myArray[0].push('for science!');
+      myValue[0].push('new');
+      console.log(result);
+      eq(result[1], '2,new');
+    },
+    'If string is passed in, it should copy value of string into newArray.': function() {
+      var result = concat([1], 'string');
+      eq(result[1], 'string');
+    },
+    'If number is passed in, it should copy value of number into newArray.': function() {
+      var result = concat([1], 2);
+      eq(result[1], 2);
+    },
+    'If boolean is passed in, it should copy value of boolean into newArray.': function() {
+      var result = concat([1], true);
+      eq(result[1], true);
+    },
+    'It should concatenate as many values as are passed in as arguments.': function() {
+      var myArray = [1];
+      var myFirstValue = [2];
+      var mySecondValue = [3];
+      var result = concat(myArray, myFirstValue, mySecondValue);
+      eq(result.length, 3);
+    },
+    'If newArray is modified, it should not effect originalArray.': function() {
+      var myArray = [1];
+      var result = concat(myArray);
+      result = 'modified';
+      eq(result, 'modified');
+      eq(myArray, 1);
+    },
+    'If the first argument passed in is not an array or a string, throw a TypeError.': function() {
+      var myNonArray = 1;
+
+      var isTypeError = false;
+      try {
+       concat(myNonArray);
+      } catch(e) {
+        isTypeError = (e instanceof TypeError);
+      }
+      eq(isTypeError, true);
+      },
+      'It should not recurse into nested array arguments.': function() {
+        var myArray = [1];
+        var myValue = [2, [3, 4]];
+        var result = concat(myArray, myValue);
+        eq(result.length, 2);
+        
+      }
+
+});
+
+</script>

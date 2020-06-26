@@ -1,0 +1,104 @@
+<script src="../simpleTest.js"></script>
+<script>
+
+// MDN Definition:
+// The includes() method determines whether an array includes a certain value 
+// among its entries, returning true or false as appropriate.
+
+// NOTES:
+
+
+// includes REQUIREMENTS:
+
+// DONE It should compare searchValue to each element in the array.
+// DONE If the array includes the desired value, it should return true.
+// DONE If the array does not include the desired value, it should return false.
+// DONE If third argument is included, it should begin searching the array from the value of the third argument (startingIndex).
+// DONE If startingIndex is negative, it should begin searching the array that many indexes from the end of the array.
+// DONE It should return a boolean value.
+// DONE If the calculated value of arr.length + startingIndex is less than 0, it should search entire array.
+// DONE If startingIndex is greater than or equal to array.length, it should return false.
+
+
+function includes(array, searchValue, startingIndex) {
+  var result = false;
+  var endOfArray = array.length;
+
+  if (arguments.length > 2) {
+    if (startingIndex > array.length) {
+      result = false;
+      return result;
+    } else if (startingIndex < 0) {
+      for (var k = endOfArray + startingIndex; k < array.length; k++) {
+        if (array[k] === searchValue) {
+          result = true;
+          return result;
+        }
+      }
+    } else {
+      for (var j = startingIndex; j < array.length; j++) {
+        if (array[j] === searchValue) {
+          result = true;
+          return result;
+        }
+      }
+    }
+  } else {
+    for (var i = 0; i < array.length; i++) {
+      if (array[i] === searchValue) {
+        result = true;
+        return result;
+      }
+    }
+  }
+  return result;
+}
+
+tests({
+
+  'It should compare searchValue to each element in the array.': function() {
+    var myArray = [1];
+    var result = includes(myArray, 1);
+    eq(result, true);
+  },
+  'If the array includes the desired value, it should return true.': function() {
+    var myArray = [1];
+    var result = includes(myArray, 1);
+    eq(result, true);
+  },
+  'If the array does not include the desired value, it should return false.': function() {
+    var myArray = [1];
+    var result = includes(myArray, 2);
+    eq(result, false);
+  },
+  'If third argument is included, it should begin searching the array from the value of the third argument (startingIndex).': function() {
+    var myArray = [1, 2];
+    var result = includes(myArray, 1, 1);
+    eq(result, false);
+  },
+  'If startingIndex is negative, it should begin searching the array that many indexes from the end of the array.': function() {
+    var myArray = [1, 2];
+    var result = includes(myArray, 1, -1);
+    eq(result, false);
+  },
+  'It should return a boolean value.': function() {
+    var result = includes([1], 1);
+    var type = (typeof result);
+    eq(type, 'boolean');
+  },
+  'If the calculated value of arr.length + startingIndex is less than 0, it should search entire array.': function() {
+    var myArray = [1, 2];
+    var result = includes(myArray, 1, -3);
+    eq(result, true);
+  },
+  'If startingIndex is greater than or equal to array.length, it should return false.': function() {
+    var myArray = [1];
+    var result = includes(myArray, 1, 3);
+    eq(result, false);
+  }
+
+
+
+
+});
+</script>

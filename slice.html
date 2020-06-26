@@ -1,0 +1,201 @@
+<script src="../simpleTest.js"></script>
+<script>
+
+// MDN Definition:
+// The slice() method returns a shallow copy of a portion of an array into a 
+// new array object selected from start to end (end not included) where start 
+// and end represent the index of items in that array. The original array will 
+// not be modified.
+
+// NOTES:
+
+
+
+// slice REQUIREMENTS:
+
+// DONE It should return an array.
+// DONE It should return a new array.
+// DONE It should return a new array containing the selected elements of the array.
+
+// DONE If an optional second argument is passed in, it should start copying from the startingIndex spot established by the second argument value.
+// DONE If an optional third argument is passed in, it should stop copying when it reaches the (lastIndex) index location established by the value of the third argument.
+// DONE If no lastIndex, it should copy to the end of the array.
+// DONE If startingIndex is a negative number, and no lastIndex, it should offset the beginning of the search that many indexes from the end of the array.
+// DONE If startingIndex is a negative number, and lastIndex is included, it should offset the beginning of the search that many indexes from the end of the array too.
+// DONE If startingIndex is greater than array.length, it should return an empty array.
+// DONE If lastIndex is a negative number, it should offset the end of the search that many indexes from the end of the array.
+// DONE If lastIndex is greater than array.length, it should copy through the end of the array.
+
+// DONE It should return a shallow copy of objects.
+  // If a change is made to a referenced object, change should be visible in both
+  // originalArray and newArray.
+
+// DONE If a string is copied, it should copy the value into the new array.
+// DONE If a number is copied, it should copy the value into the new array.
+// DONE If a boolean is copied, it should copy the value into the new array.
+  // Changes to the originalArray should not affect these.
+
+// DONE It should not alter the originalArray.
+// DONE If an element is added to originalArray, newArray should not be affected.
+// DONE If an element is added to newArray, originalArray should not be affected.
+
+
+function slice(array, startingIndex, lastIndex) {
+  var boundLength = array.length - 1;
+  var newArray = [];
+  var fixedStartingIndex = 0;
+  var fixedLastIndex = boundLength;
+
+// Setting starting Index
+if (startingIndex) {
+  if (startingIndex > array.length) {
+    return newArray;
+  } else if (startingIndex < 0) {
+      fixedStartingIndex = array.length + startingIndex;
+  } else {
+    fixedStartingIndex = startingIndex;
+  }
+}
+
+// Setting last Index
+if (lastIndex) {
+  if (lastIndex < 0) {
+    fixedLastIndex = array.length + lastIndex;
+  } else if (lastIndex > array.length) {
+      fixedLastIndex = array.length;
+  } else {
+      fixedLastIndex = lastIndex;
+  }
+}
+
+// Creating New Array
+if (arguments.length === 3) {
+  for (var i = fixedStartingIndex; i < fixedLastIndex; i++) {
+    newArray.push(array[i]);
+  }
+    return newArray;
+} else if (arguments.length === 2) {
+  for (var j = fixedStartingIndex; j < array.length; j++) {
+    newArray.push(array[j]);
+  }
+  return newArray;
+} else {
+  for (var k = 0; k < array.length; k++) {
+    newArray.push(array[k]);
+  }
+  return newArray;
+}
+
+return newArray;
+
+}
+
+
+tests({
+
+  'It should return an array.': function() {
+    var result = slice([1]);
+    eq(Array.isArray(result), true);
+  },
+  'It should return a new array.': function() {
+    var originalArray = [1];
+    var result = slice(originalArray);
+    eq(result !== originalArray, true);
+  },
+  'It should return a new array containing the selected elements of the array.': function() {
+    var myArray = [1];
+    var result = slice(myArray);
+    eq(result, 1);
+  },
+  'If an optional second argument is passed in, it should start copying from the startingIndex spot established by the second argument value.': function() {
+    var myArray = [1, 2];
+    var result = slice(myArray, 1);
+    eq(result, 2);
+  },
+  'If an optional third argument is passed in, it should stop copying when it reaches the (lastIndex) index location established by the value of the third argument.': function() {
+    var myArray = [1, 2, 3];
+    var result = slice(myArray, 1, 2);
+    eq(result, 2);
+  },
+  'If no lastIndex, it should copy to the end of the array.': function() {
+    var myArray = [1, 2, 3];
+    var result = slice(myArray, 1);
+    eq(result, ('2,3'));
+  },
+  'If startingIndex is a negative number, and no lastIndex, it should offset the beginning of the search that many indexes from the end of the array.': function() {
+    var myArray = [1, 2, 3];
+    var result = slice(myArray, -1);
+    eq(result, 3);
+  },
+  'If startingIndex is a negative number, and lastIndex is included, it should offset the beginning of the search that many indexes from the end of the array too.': function() {
+    var myArray = [1, 2, 3];
+    var result = slice(myArray, -1, 3);
+    eq(result, 3);
+  },
+  'If startingIndex is greater than array.length, it should return an empty array.': function() {
+    var myArray = [1];
+    var result = slice(myArray, 2);
+    eq(result.length, 0);
+  },
+  'If lastIndex is a negative number, it should offset the end of the search that many indexes from the end of the array.': function() {
+    var myArray = [1, 2, 3];
+    var result = slice(myArray, 0, -1);
+    eq(result.length, 2);
+  },
+  'If lastIndex is greater than array.length, it should copy through the end of the array.': function() {
+    var myArray = [1, 2];
+    var result = slice(myArray, 0, 3);
+    eq(result.length, 2);
+  },
+  'It should make a shallow copy of objects in the originalArray.': function() {
+    var myArray = [[1]];
+    var result = slice(myArray);
+    myArray[0].push(3);
+    eq(result[0].length, 2);
+  },
+  'If a string is copied, it should copy the value into the new array.': function() {
+    var myArray = ['old'];
+    var result = slice(myArray);
+    myArray = ['new'];
+    eq(result, 'old');
+    eq(myArray, 'new');
+  },
+  'If a number is copied, it should copy the value into the new array.': function() {
+    var myArray = [2];
+    var result = slice(myArray);
+    myArray = [3];
+    eq(result, 2);
+    eq(myArray, 3);
+  },
+  'If a boolean is copied, it should copy the value into the new array.': function() {
+    var myArray = [true];
+    var result = slice(myArray);
+    myArray = false;
+    eq(result, 'true');
+    eq(myArray, false);
+  },
+  'It should not alter the original array.': function() {
+    var myArray = [1];
+    var result = slice(myArray);
+    eq(myArray, 1);
+  },
+  'If an element is added to originalArray, newArray should not be affected.': function() {
+    var myArray = [1];
+    var result = slice(myArray);
+    myArray.push(3);
+    eq(myArray.length, 2);
+    eq(result.length, 1);
+  },
+  'If an element is added to newArray, originalArray should not be affected.': function() {
+    var myArray = [1];
+    var result = slice(myArray);
+    result.push(3);
+    eq(myArray.length, 1);
+    eq(result.length, 2);
+  }
+
+
+
+
+});
+</script>

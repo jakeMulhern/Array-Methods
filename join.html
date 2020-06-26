@@ -1,0 +1,72 @@
+<script src="../simpleTest.js"></script>
+<script>
+
+// NOTES:
+// array.string()
+
+
+// join REQUIREMENTS:
+
+// DONE It should convert the array into a string.
+// DONE It should include all elements of the array in the string.
+// DONE If second argument is passed in, it should seperate each element from array in the string using the value identified in the second argument.
+// DONE If no seperator is included, it should use a comma to seperate elements.
+// DONE If seperator is an empty string, it should not seperate elements in string.
+// DONE If necessary, it should convert seperator into a string.
+
+
+
+function join(array, seperator) {
+  var joinedArray;
+  var bucket = [];
+  
+  if (arguments.length === 2) {
+    joinedArray = (array[0].toString() + seperator.toString());
+    for (var i = 1; i < array.length - 1; i++) {
+      joinedArray = joinedArray + (array[i].toString() + seperator.toString());
+    }
+    joinedArray = joinedArray + array[array.length - 1];
+    return joinedArray;
+  } else {
+    joinedArray = array.toString();
+    return joinedArray;
+  }
+}
+
+
+tests({
+
+  'It should convert the array into a string.': function() {
+    var myArray = ['element'];
+    var result = join(myArray);
+    var whatIsIt = (typeof result);
+    eq(whatIsIt, 'string');
+  },
+  'It should include all elements of the array in the string.': function() {
+    var myArray = ['first', 'second'];
+    var result = join(myArray);
+    eq(result, 'first,second');
+  },
+  'If second argument is passed in, it should seperate each element from array in the string using the value identified in the second argument.': function() {
+    var myArray = ['first', 'second', 'third'];
+    var result = join(myArray, '-');
+  },
+  'If no seperator is included, it should use a comma to seperate elements.': function() {
+    var myArray = ['first', 'second'];
+    var result = join(myArray);
+    eq(result, 'first,second');
+  },
+  'If seperator is an empty string, it should not seperate elements in string.': function() {
+    var myArray = ['first', 'second'];
+    var result = join(myArray, '');
+    eq(result, 'firstsecond');
+  },
+  'If necessary, it should convert seperator into a string.': function() {
+    var myArray = ['first', 'second'];
+    var result = join(myArray, 2);
+    eq(result, 'first2second')
+  }
+
+
+});
+</script>

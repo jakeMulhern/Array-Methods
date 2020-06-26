@@ -1,0 +1,163 @@
+<script src="../simpleTest.js"></script>
+<script>
+
+// MDN Definition:
+// The copyWithin() method shallow copies part of an array to 
+// another location in the same array and returns it without 
+// modifying its length.
+
+// NOTES:
+
+
+// copyWithin REQUIREMENTS:
+
+// DONE It should copy a section of an array onto another section of the array.
+// DONE It should mutate the original array, not return a new array.
+// DONE It should return the modified original array.
+// DONE It should copy onto the section starting at the (target) index which is designated in the second argument that is passed in.
+// DONE If the target is a negative number, it should offset that many indexes from array.length.
+// DONE If target is greater than or equal to array.length, it should return the original array without copying anything.
+// DONE If the target is located at a greater index than (start), it should trim the copied sequence to fit inside of array.length.
+// DONE If a third argument is passed in, it should begin the copied sequence at that designated index.
+// DONE If start is a negative number, it should offset that many indexes from array.length.
+// DONE If no start, start copy from index 0.
+// DONE If a fourth argument is passed in, it should finish the copied sequence at that designated index.
+// DONE If end is a negative number, it should offset the ending that many indexes from array.length.
+// DONE If no end, it should copy to the end of the array.
+// DONE If the pasted onto section overlaps with the copied section, it should still copy that same section.
+
+
+
+function copyWithin(array, target, start, end) {
+  var fixedTarget = target;
+  var bucket = array;
+  var fixedStart = start;
+  var fixedEnd = end;
+
+  if (target > array.length) {
+    return array;
+  } else if (target < 0) {
+    fixedTarget = array.length + target;
+  }
+
+  if (end) {
+    if (end > array.length) {
+      endStart = array.length - start;
+    } else if (end < 0) {
+      fixedEnd = array.length + end;
+    }
+  }
+
+  if (start) {
+    if (start < 0) {
+      fixedStart = array.length + start;
+    }
+  }
+
+  var endStart = fixedEnd - fixedStart;
+  
+  if (arguments.length === 4) {
+    if (target > fixedStart) {
+      for (var k = array.length - 1; k >= target; k--) {
+        array[k] = array[k - (target - fixedStart)];
+      }
+    } else {
+      for (var i = fixedTarget; i < (fixedTarget + endStart); i++) {
+      array[i] = array[i + (fixedStart - fixedTarget)];
+    }
+    }
+    
+  } else if (arguments.length === 3) {
+    if (target > fixedStart) {
+      for (var l = array.length - 1; l >= target ; l--) {
+        array[l] = array[l - (target - fixedStart)];
+      }
+    } else {
+      for (var j = fixedTarget; j < (fixedTarget + ((array.length) - fixedStart)); j++) {
+      array[j] = array[j + (fixedStart - fixedTarget)];
+    } 
+    }
+  } else if (arguments.length === 2) {
+      array[fixedTarget] = array[0];
+  }
+  return array;
+}
+
+
+tests({
+
+  'It should copy one section of the array onto another section.': function() {
+    var myArray = [1, 2];
+    copyWithin(myArray, 0, 1);
+    eq(myArray[0], 2);
+  },
+  'It should mutate the original array, not return a new array.': function() {
+    var myArray = [1, 2];
+    var result = copyWithin(myArray, 1);
+    eq(result, myArray);
+  },
+  'It should return the modified array.': function() {
+    var myArray = [1, 2];
+    var result = copyWithin(myArray, 1);
+    eq(result, '1,1');
+  },
+  'It should copy the section starting at the (target) index which is designated in the second argument that is passed in.': function() {
+    var myArray = [1, 2, 3];
+    copyWithin(myArray, 1, 2);
+    eq(myArray[1], 3);
+  },
+  'If the target is a negative number, it should offset that many indexes from array.length.': function() {
+    var myArray = [1, 2, 3];
+    copyWithin(myArray, -2);
+    eq(myArray[1], 1);
+  },
+  'If target is greater than or equal to array.length, it should return the original array without copying anything.': function() {
+    var myArray = [1, 2];
+    copyWithin(myArray, 3, 1);
+    eq(myArray[0], 1);
+    eq(myArray[1], 2);
+  },
+  'If a third argument is passed in, it should begin the copied sequence at that designated index.': function() {
+    var myArray = [1, 2, 'start'];
+    copyWithin(myArray, 1, 2)
+    eq(myArray[1], 'start');
+  },
+  'If the target is located at a greater index than (start), it should trim the copied sequence to fit inside of array.length.': function() {
+    var myArray = [1, 2, 3, 4, 5];
+    copyWithin(myArray, 2, 1);
+    eq(myArray[3], 3);
+  },
+  'If start is a negative number, it should offset that many indexes from array.length.': function() {
+    var myArray = [1, 2, 'start', 3];
+    copyWithin(myArray, 1, -2);
+    eq(myArray[1], 'start')
+  },
+  'If no start, start copy from index 0.': function() {
+    var myArray = ['start', 1, 2, 3];
+    copyWithin(myArray, 2);
+    eq(myArray[2], 'start');
+  },
+  'If a fourth argument is passed in, it should finish the copied sequence when it reaches the designated index.': function() {
+    var myArray = ['start', 'end', 1, 2];
+    copyWithin(myArray, 2, 0, 2);
+    eq(myArray[3], 'end');
+  },
+  'If end is a negative number, it should offset the ending that many indexes from array.length.': function() {
+    var myArray = [1, 2, 'end', 3, 4];
+    copyWithin(myArray, 3, 1, -3);
+    eq(myArray[4], 'end');
+  },
+  'If no end, it should copy to the end of the array.': function() {
+    var myArray = [1, 2, 3, 4];
+    copyWithin(myArray, 0, 1);
+    eq(myArray[2], 4);
+  },
+  'If the pasted onto section overlaps with the copied section, it should still copy that same section.': function() {
+    var myArray = [1, 2, 3, 4];
+    copyWithin(myArray, 0, 1);
+    eq(myArray[1], 3);
+  }
+
+
+});
+</script>

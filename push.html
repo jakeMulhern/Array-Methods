@@ -1,0 +1,46 @@
+<script src="../simpleTest.js"></script>
+<script>
+
+// MDN Definition:
+// The push() method adds one or more elements to the end of an array and 
+// returns the new length of the array.
+
+// NOTES:
+
+// push REQUIREMENTS:
+
+// DONE It should append an element to an array.
+// DONE It should append as many elements as are passed in to the array.
+// DONE It should return the new array length property.
+
+
+function push(array, valueN) {
+  for (var i = 1; i < arguments.length; i++) {
+    array[array.length] = valueN;
+  }
+  return array.length;
+}
+
+
+tests({
+
+  'It should append an element to the array.': function() {
+    var myArray = [1];
+    push(myArray, 2);
+    eq(myArray.length, 2);
+  },
+  'It should append as many elements as are passed in to the array': function() {
+    var myArray = [1];
+    push(myArray, 2, 3);
+    eq(myArray.length, 3);
+  },
+  'It should return the new array length property': function() {
+    var myArray = [1];
+    var result = push(myArray, 2);
+    eq(result, 2);
+  }
+
+
+
+});
+</script>

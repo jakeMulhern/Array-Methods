@@ -1,0 +1,75 @@
+<script src="../simpleTest.js"></script>
+<script>
+
+// MDN Definition:
+// The unshift() method adds one or more elements to the beginning 
+// of an array and returns the new length of the array.
+
+// NOTES:
+
+// unshift REQUIREMENTS:
+
+// DONE It should append the designated element to the beginning of the array.
+// DONE It should increase the length of the array.
+// DONE It should return the new length property of the array.
+// DONE If multiple elements are passed in it should append them to the beginning of the array in one chunk, so that they remain in the same order.
+// DONE If it is called on an element that is not an array, it should throw an error.
+
+
+function unshift(array, elementN) {
+  var addedLength = arguments.length - 1;
+  array.length = array.length + addedLength;
+
+  if (typeof arguments[0] !== 'object') {
+    throw new TypeError('array.unshift is not a function');
+  }
+
+  for (var i = addedLength; i < array.length; i++) {
+    array[i] = array[i - addedLength];
+  }
+
+  for (var j = 0; j < addedLength; j++) {
+    array[j] = arguments[j + 1];
+  }
+  return array.length;
+}
+
+
+
+tests({
+
+  'It should append the designated element(s) to the beginning of the array.': function() {
+    var myArray = ['old'];
+    unshift(myArray, 'new');
+    eq(myArray[0], 'new');
+  },
+  'It should increase the length of the array.': function() {
+    var myArray = ['old'];
+    eq(myArray.length, 1);
+    unshift(myArray, 'new');
+    eq(myArray.length, 2);
+  },
+  'It should return the new length property of the array.': function() {
+    var myArray = ['old'];
+    var result = unshift(myArray, 'new');
+    eq(result, 2);
+  },
+  'If multiple elements are passed in it should append them to the beginning of the array in one chunk, so that they remain in the same order.': function() {
+    var myArray = ['third'];
+    unshift(myArray, 'first', 'second');
+    eq(myArray[0], 'first');
+    eq(myArray[1], 'second');
+    eq(myArray[2], 'third');
+  },
+  'If it is called on an element that is not an array, throw TypeError.': function() {
+    var isTypeError = false;
+    try {
+      unshift(2, 'new');
+    } catch(e) {
+      isTypeError = (e instanceof TypeError);
+    }
+    eq(isTypeError, true);
+  }
+
+});
+</script>

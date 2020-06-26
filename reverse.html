@@ -1,0 +1,96 @@
+<script src="../simpleTest.js"></script>
+<script>
+
+// MDN Definition:
+// The reverse() method reverses an array in place. 
+// The first array element becomes the last, and the last 
+// array element becomes the first.
+
+// NOTES:
+
+
+// reverse REQUIREMENTS:
+// DONE It should reverse the entire array.
+// DONE It should mutate the array, not create a new array.
+// DONE It should return the reversed array.
+// It should reverse the array in place.
+  // I think this means it should return the same array, looking into this.
+
+
+
+/*
+function reverse(array) {
+  var copyArray = array;
+  var bucket = [];
+
+  if (typeof arguments[0] !== 'object') {
+    throw new TypeError('array.reverse is not a function');
+  }
+
+  for (var i = array.length - 1; i >= 0; i--) {
+    bucket.push(copyArray[i]);
+  }
+  for (var j = 0; j < bucket.length; j++) {
+    array[j] = bucket[j];
+  }
+  return array;
+}
+*/
+
+// This one should be "in place"
+// The above one also works but uses another array to transfer the order over to the original array.
+function reverse(array) {
+  if (typeof arguments[0] !== 'object') {
+    throw new TypeError('array.reverse is not a function');
+  }
+
+  array.length = array.length * 2;
+  var compliment = 0;
+
+  for (var i = array.length - 1; i >= array.length / 2; i--) {
+    array[i] = array[compliment];
+    compliment++;
+  }
+  for (var j = 0; j < array.length / 2; j++) {
+    array[j] = array[(array.length / 2) + j]
+  }
+
+  array.length = array.length / 2;
+
+  return array;
+}
+
+
+
+
+tests({
+
+  'It should reverse the entire array.': function() {
+    var myArray = ['first', 'second'];
+    reverse(myArray);
+    eq(myArray, 'second,first');
+  },
+  'It should mutate the array.': function() {
+    var myArray = [1, 2];
+    var result = reverse(myArray);
+    eq(result, myArray);
+  },
+  'It should return the reversed array.': function() {
+    var myArray = [1, 2];
+    var result = reverse(myArray);
+    eq(result, '2,1');
+    eq(result, myArray);
+  },
+  'If the element passed in is not an object, it should throw a TypeError': function() {
+    var isTypeError = false;
+    try {
+      reverse(2);
+    } catch(e) {
+      isTypeError = (e instanceof TypeError);
+    }
+    eq(isTypeError, true);
+  }
+
+
+});
+</script>

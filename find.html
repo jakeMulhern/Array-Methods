@@ -1,0 +1,275 @@
+<script src="../simpleTest.js"></script>
+<script>
+
+// MDN Definition:
+// The find() method returns the value of the first element in the 
+// provided array that satisfies the provided testing function.
+
+// Requirements: 
+// DONE It should run the callback function array.length times.
+// DONE It should pass in the ith element as the first argument to the callback.
+// DONE It should pass in the ith position as the second argument to the callback.
+// DONE It should pass in the originalArray as the third argument to the callback.
+// DONE It should accept a configurable 'this' object.
+
+// DONE It should only return the value of the the first element that satisfies testing function.
+// DONE If no elements meet callback requirement it should return undefined.
+// DONE It should run callback on every index of array, including unassigned values.
+// DONE It should not mutate originalArray.
+
+  // DONE Callback should not visit elements added to array after find begins
+  // DONE existing and unvisited element is changed by callback, it should use the value at the time find visits the elements index.
+  // DONE It should run callback on deleted elements
+
+// Investigation into behavior of find when elements are added to beginning, middle, and end after call to find begins
+/* 
+this happens when I add to the END
+
+TEST 1
+var myArray = [1];
+function addEnd(value) {
+  myArray.push(2);
+  console.log(value);
+  console.log(myArray);
+}
+
+myArray.find(addEnd);
+
+Result:
+1
+myArray = [1, 2]
+
+
+TEST 2
+var myStringArray = ['hey'];
+
+function addStringEnd(value) {
+  myStringArray.push('there');
+  console.log(value);
+  console.log(myStringArray);
+}
+
+myStringArray.find(addStringEnd);
+
+Results:
+hey
+['hey', 'there']
+
+
+TEST 3
+var myArray = [1];
+function addEnd(value) {
+  myArray.splice(1, 0, 'new');
+  console.log(value);
+  console.log(myArray);
+}
+
+myArray.find(addEnd);
+
+RESULTS:
+1
+[1, 'new']
+
+
+
+
+to the MIDDLE
+
+TEST 1:
+var myArray = [1, 2];
+
+function addMiddle(value, index) {
+  if (index === 0) {
+    myArray.splice(1, 0, 'new');
+  }
+  console.log(value);
+  console.log(myArray);
+}
+
+myArray.find(addMiddle);
+
+RESULTS:
+1
+[1, 'new', 2]
+new
+[1, 'new', 2]
+
+TEST 2:
+var myArray = [1, 2];
+
+function addMiddle(value, index) {
+  if (index === 0) {
+    myArray.splice(1, 0, 'new');
+    myArray.splice(2, 0, 'new2');
+  }
+  console.log(value);
+  console.log(myArray);
+}
+
+RESULTS:
+1
+[1, 'new', 'new', 2]
+new
+[1, 'new', 'new', 2]
+
+
+
+to the BEGINNING
+var myArray = [1];
+
+function addFront(value) {
+  myArray.splice(0, 0, 'new');
+  console.log(value);
+  console.log(myArray);
+}
+
+myArray.find(addFront);
+
+RESULTS:
+1
+['new', 1]
+
+
+
+*/
+
+
+ function find(array, callback, optionalThis) {
+   var boundLength = array.length;
+   var forEachCallback = callback;
+
+   if (optionalThis) {
+     forEachCallback = callback.bind(optionalThis);
+   }
+
+   for (var i = 0; i < boundLength; i++) {
+     console.log(array[i]);
+     if (forEachCallback(array[i], i, array)) {
+       var foundElement = array[i];
+       return foundElement;
+     };
+   }
+    return undefined;
+ }
+
+
+tests({
+
+  'If no elements meet the callback requirement, It should run the function array.length times.': function() {
+    var numberOfTimesCallbackHasRun = 0;
+    find([1, 2, 3], function() {
+      numberOfTimesCallbackHasRun++;
+    });
+    eq(numberOfTimesCallbackHasRun, 3);
+  },
+  'It should run the callback function only until it finds a match.': function() {
+    var numberOfTimesCallbackHasRun = 0;
+    find([1, 2, 3, 4], function(number) {
+      return number > 2;
+      numberOfTimesCallbackHasRun++;
+      eq(numberOfTimesCallbackHasRun, 2);
+    });
+  },
+  'It should pass in the ith element as the first argument to the callback.': function() {
+    find([1], function(number) {
+      eq(number, 1);
+    });
+  },
+  'It should pass in the ith position as the second argument to the callback.': function() {
+    find([1], function(number, index) {
+      eq(index, 0);
+    });
+  },
+  'It should pass in the originalArray as the third argument to the callback.': function() {
+    var testArray = [1]
+    find(testArray, function(number, index, originalArray) {
+      eq(testArray, originalArray);
+    });
+  },
+  'It should accept a configurable this object.': function() {
+    find([1], function() {
+      eq(this.description, 'Im still a configurable this');
+    }, {description: 'Im still a configurable this'});
+  },
+  'It should only return the value of the the first element that satisfies testing function.': function() {
+    var foundItem = find([1, 2, 3], function(number) {
+       return number > 1;
+    });
+    eq(foundItem, 2);
+  },
+  'If no elements meet callback requirement it should return undefined.': function() {
+    var noFoundItem = find([1, 2], function(number) {
+      return number > 3;
+    })
+    eq(noFoundItem, undefined)
+  },
+  'It should run callback on every index of array, including unassigned values.': function() {
+    var numberOfTimesCallbackHasRun = 0;
+    find([undefined, 1, 2,], function(number) {
+      return number > 3;
+      numberOfTimesCallbackHasRun++;
+      eq(numberOfTimesCallbackHasRun, 4);
+    });
+  },
+  'It should not mutate originalArray.': function() {
+    var myOriginalArray = [1, 2];
+    find(myOriginalArray, function(number) {
+      return number > 1;
+      var myCopyArray = myOriginalArray;
+      eq(myOriginalArray, myCopyArray);
+    });
+  },
+  'Callback should not visit elements added to the end of the array after find begins.': function() {
+    var numberOfTimesCallbackHasRun = 0;
+    var myArray = [1, 2, 3]
+    find(myArray, function(number, index) {
+      if (index === 0) {
+        myArray.push(5);
+      }
+      numberOfTimesCallbackHasRun++;
+    })
+    console.log(myArray);
+    console.log(numberOfTimesCallbackHasRun);
+    eq(numberOfTimesCallbackHasRun, 3);
+  },
+  'Callback should not visit elements added to the beginning of the array after find begins.': function() {
+    var myArray = [1];
+    var foundItem = find(myArray, function(value) {
+       myArray.splice(0, 0, 2);
+       console.log('Each value ' +value);
+       console.log('My array ' + myArray);
+       eq(value, 1);
+    });
+    
+  },
+  'It should run callback on deleted elements.': function() {
+    var numberOfTimesCallbackHasRun = 0;
+    var myArray = [1, 2, 3]
+    find(myArray, function(number, index) {
+      if (index === 0) {
+        myArray.pop(3);
+      }
+      numberOfTimesCallbackHasRun++;
+    })
+    console.log(myArray);
+    console.log(numberOfTimesCallbackHasRun);
+    eq(numberOfTimesCallbackHasRun, 3);
+  },
+  'If existing and unvisited elements are changed by callback, it should use the value at the time .find visits the elements index.': function() {
+    var numberOfTimesCallbackHasRun = 0;
+    var myArray = [1, 2, 3]
+    find(myArray, function(number, index) {
+      if (index === 0) {
+        myArray.pop(3);
+        myArray[1] = 4;
+      }
+      numberOfTimesCallbackHasRun++;
+    })
+    console.log(myArray);
+    console.log(numberOfTimesCallbackHasRun);
+    eq(myArray[1], 4);
+    eq(myArray[2], undefined);
+  }
+
+});
+</script>
